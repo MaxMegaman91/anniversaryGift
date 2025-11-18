@@ -1,0 +1,3 @@
+.without-pointer {
+  pointer-events: none;
+}

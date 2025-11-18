@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anniversary Desktop</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function AnniversaryDesktop() {
+          const [currentMode, setCurrentMode] = useState('gf');
+          const [currentImageIndex, setCurrentImageIndex] = useState(0);
+          const [fade, setFade] = useState(true);
+
+          const images = {
+            gf: [
+              'imgs/gf/567112582_1753813521980739_1247547649898203365_n.jpg',
+              'imgs/gf/581841762_837806945616026_7793970992316343431_n.jpg',
+              'imgs/gf/581975183_1333433828518291_6851750869944225118_n.jpg',
+              'imgs/gf/582272523_1789074395145795_7650017295329833044_n.jpg',
+              'imgs/gf/582275954_816769624601594_2265231661372439727_n.jpg'
+            ],
+            bf: [
+              'imgs/bf/566621375_830739952885283_8702928936792635814_n.jpg',
+              'imgs/bf/567641318_850247854249539_4492086967171163246_n.jpg',
+              'imgs/bf/581972304_2411419812593827_2911881281398080096_n.jpg',
+              'imgs/bf/582008382_1304106094848606_6295875316883279064_n.jpg',
+              'imgs/bf/582227293_1144765904041883_1835534401270174816_n.jpg'
+            ]
+          };
+
+          const currentImages = images[currentMode];
+
+          useEffect(() => {
+            const interval = setInterval(() => {
+              setFade(false);
+              setTimeout(() => {
+                setCurrentImageIndex((prev) => (prev + 1) % currentImages.length);
+                setFade(true);
+              }, 500);
+            }, 5000);
+
+            return () => clearInterval(interval);
+          }, [currentImages.length]);
+
+          const handleModeChange = (e) => {
+            const isGf = e.target.checked;
+            setFade(false);
+            setTimeout(() => {
+              setCurrentMode(isGf ? 'gf' : 'bf');
+              setCurrentImageIndex(0);
+              setFade(true);
+            }, 500);
+          };
+
+          return (
+            <div className="relative w-full h-screen overflow-hidden bg-black">
+
+                <div 
+                    className={`absolute inset-0 transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}
+                    style={{
+                    backgroundImage: `linear-gradient(135deg, rgba(139, 0, 255, 0.3) 0%, rgba(255, 0, 200, 0.2) 25%, rgba(0, 200, 255, 0.2) 50%, rgba(0, 255, 100, 0.2) 75%, rgba(255, 200, 0, 0.2) 100%)`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'brightness(0.8)'
+                    }}
+                />
+                
+                <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                    background: 'radial-gradient(ellipse at center, transparent 0%, rgba(75, 0, 130, 0.4) 100%)'
+                    }}
+                />
+
+                
+
+                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-1 rounded-full shadow-lg">
+                    <div className="bg-black bg-opacity-30 backdrop-blur-sm px-6 py-3 rounded-full flex items-center gap-4">
+                        <span className={`text-white font-semibold transition-all duration-300 ${currentMode === 'bf' ? 'opacity-100 scale-110' : 'opacity-50 scale-100'}`}>
+                        His Photos
+                        </span>
+                        
+                        <label className="relative inline-block w-16 h-8 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            checked={currentMode === 'gf'}
+                            onChange={handleModeChange}
+                            className="sr-only peer"
+                        />
+                        <div className="w-16 h-8 bg-purple-900 rounded-full peer-checked:bg-pink-500 transition-all duration-300 shadow-inner"></div>
+                        <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-all duration-300 peer-checked:translate-x-8 flex items-center justify-center shadow-md">
+                            <svg className="w-4 h-4 text-pink-500 fill-pink-500" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </div>
+                        </label>
+                        
+                        <span className={`text-white font-semibold transition-all duration-300 ${currentMode === 'gf' ? 'opacity-100 scale-110' : 'opacity-50 scale-100'}`}>
+                        Her Photos
+                        </span>
+                    </div>
+                    </div>
+                </div>
+
+                {/* IMAGE CAROUSEL (centered) */}
+                <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                <img 
+                    key={currentImageIndex}
+                    src={currentImages[currentImageIndex]}
+                    className={`max-h-[70vh] max-w-[80vw] rounded-2xl object-cover shadow-2xl transition-opacity duration-500 ${
+                    fade ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    style={{
+                    pointerEvents: 'auto',  // Image itself can be clicked/dragged if needed
+                    }}
+                />
+                </div>
+
+
+
+                <div className="absolute bottom-8 right-8 z-10">
+                    <div className="bg-black bg-opacity-50 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-400">
+                    <span className="text-white font-mono text-sm">
+                        {currentImageIndex + 1} / {currentImages.length}
+                    </span>
+                    </div>
+                </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AnniversaryDesktop />);
+    </script>
+</body>
+</html>
